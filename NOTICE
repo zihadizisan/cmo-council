@@ -1,0 +1,22 @@
+NOTICE
+
+CMO Council is an adaptation of the llm-council skill
+(https://github.com/tenfoldmarc/llm-council-skill) and the LLM Council
+methodology described by Andrej Karpathy
+(https://x.com/karpathy/status/1962263486196867115).
+
+Derived concepts:
+- council structure
+- blind peer review with randomized anonymization
+- chairman synthesis of reviewed responses
+
+CMO Council additions:
+- six marketing owner seats and an optional specialist seat
+- BUILD and REBUILD modes
+- twelve-slot intake and capped clarifying questions
+- GIVEN / BENCHMARK / ASSUMED number provenance
+- conflict review and the 60% resource-cut test
+- explicit CMO rulings and a costed, sequenced marketing plan
+- arithmetic, capacity, ownership, decision, and traceability gates
+
+Sibling project: https://github.com/zihadizisan/marketing-council

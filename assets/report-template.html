@@ -1,0 +1,507 @@
+<!doctype html>
+<!--
+================================================================================
+CMO COUNCIL REPORT TEMPLATE
+
+Fill every {{PLACEHOLDER}} and save as:
+    cmo-council-report-[YYYY-MM-DD].html
+in the working directory, then open it.
+
+This report is the SUMMARY of the plan and the argument behind it. The plan
+itself is the .md file — link to it from the header and do not duplicate it
+here. If a reader wants the full plan they open the plan.
+
+FILLING RULES
+
+1. CAPACITY METER — set style="width:NN%" on .meter-fill where NN is the
+   percentage of team capacity the plan schedules. Set the class to:
+       meter-ok      up to 70%   (within the capacity gate)
+       meter-warn    71-85%
+       meter-over    86%+        — this should not ship; the gate failed
+
+2. BUDGET BARS — one .alloc row per channel. Set style="width:NN%" where NN
+   is that channel's share of total budget.
+
+3. BRAND / ACTIVATION SPLIT — set style="left:NN%" on .split-marker, where NN
+   is the activation percentage. A 30% brand / 70% activation plan puts the
+   marker at left:70%.
+
+4. NUMBER TAGS — wrap every number's provenance in
+   <span class="tag tag-given">GIVEN</span>, tag-benchmark, or tag-assumed.
+
+5. DECISION CARDS — repeat .decision once per conflict from round two. If
+   round two produced NO genuine conflict, delete the cards and use the
+   .honesty-note block instead. Do not fabricate a disagreement.
+
+6. Repeat <details class="seat"> six times, once per seat. Repeat
+   <details class="review"> once per conflict review.
+
+7. Delete any section that genuinely does not apply. Never leave a visible
+   {{PLACEHOLDER}} in the output.
+================================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CMO Council — {{PLAN_NAME}}</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #fafaf9;
+    --surface-2: #f5f5f4;
+    --text: #1c1917;
+    --text-muted: #78716c;
+    --border: #e7e5e4;
+    --border-strong: #d6d3d1;
+    --accent: #1c1917;
+    --bet-bg: #f5f3ff;
+    --bet-line: #6d28d9;
+    --bet-text: #5b21b6;
+    --ok: #15803d;
+    --warn: #a16207;
+    --over: #b91c1c;
+    --given: #15803d;
+    --given-bg: #f0fdf4;
+    --benchmark: #a16207;
+    --benchmark-bg: #fefce8;
+    --assumed: #c2410c;
+    --assumed-bg: #fff7ed;
+    --bar: #57534e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1917;
+      --surface: #262322;
+      --surface-2: #2d2a28;
+      --text: #f5f5f4;
+      --text-muted: #a8a29e;
+      --border: #3f3a37;
+      --border-strong: #57504b;
+      --accent: #f5f5f4;
+      --bet-bg: #1e1a2e;
+      --bet-line: #a78bfa;
+      --bet-text: #c4b5fd;
+      --ok: #4ade80;
+      --warn: #fcd34d;
+      --over: #f87171;
+      --given: #4ade80;
+      --given-bg: #14261a;
+      --benchmark: #fcd34d;
+      --benchmark-bg: #292010;
+      --assumed: #fb923c;
+      --assumed-bg: #2b1a0e;
+      --bar: #a8a29e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 48px 24px 96px;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; }
+
+  /* ---- masthead ---- */
+  .eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--text-muted); margin: 0 0 10px;
+  }
+  h1 {
+    font-size: 30px; line-height: 1.22; font-weight: 650;
+    letter-spacing: -.02em; margin: 0 0 12px;
+  }
+  .dateline { color: var(--text-muted); font-size: 14px; margin: 0 0 8px; }
+  .planlink { font-size: 14px; margin: 0 0 40px; }
+  .planlink a { color: var(--text); }
+
+  /* ---- generic section ---- */
+  section { margin: 0 0 40px; }
+  h2 {
+    font-size: 12px; font-weight: 650; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--text-muted);
+    margin: 0 0 16px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 { font-size: 16px; font-weight: 620; margin: 24px 0 8px; }
+  p { margin: 0 0 14px; }
+  ul { margin: 0 0 14px; padding-left: 20px; }
+  li { margin-bottom: 7px; }
+  .muted { color: var(--text-muted); }
+  .small { font-size: 14px; }
+
+  /* ---- the bet ---- */
+  .bet {
+    background: var(--bet-bg); border: 1px solid var(--border-strong);
+    border-left: 4px solid var(--bet-line);
+    border-radius: 8px; padding: 24px 26px; margin: 0 0 32px;
+  }
+  .bet-label {
+    font-size: 11px; font-weight: 650; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px;
+  }
+  .bet-value {
+    font-size: 21px; line-height: 1.4; font-weight: 600;
+    letter-spacing: -.01em; margin: 0 0 12px; color: var(--bet-text);
+  }
+  .bet p:last-child { margin: 0; font-size: 15px; }
+
+  /* ---- stat strip ---- */
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px; background: var(--border); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden; margin: 0 0 40px;
+  }
+  .stat { background: var(--surface); padding: 16px 18px; }
+  .stat-k {
+    font-size: 11px; font-weight: 650; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text-muted); margin: 0 0 6px;
+  }
+  .stat-v { font-size: 20px; font-weight: 650; letter-spacing: -.01em; margin: 0; }
+
+  /* ---- number tags ---- */
+  .tag {
+    display: inline-block; font-size: 10px; font-weight: 650;
+    letter-spacing: .06em; text-transform: uppercase;
+    padding: 2px 6px; border-radius: 4px; vertical-align: 2px; margin-left: 5px;
+  }
+  .tag-given     { color: var(--given);     background: var(--given-bg); }
+  .tag-benchmark { color: var(--benchmark); background: var(--benchmark-bg); }
+  .tag-assumed   { color: var(--assumed);   background: var(--assumed-bg); }
+
+  /* ---- arithmetic chain ---- */
+  .chain {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 20px 22px; margin: 0 0 16px;
+    font: 14px/1.9 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    overflow-x: auto;
+  }
+  .chain .step { white-space: nowrap; }
+  .chain .weak { color: var(--assumed); font-weight: 600; }
+
+  /* ---- allocation bars ---- */
+  .alloc { margin: 0 0 12px; }
+  .alloc-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 14px; margin: 0 0 5px;
+  }
+  .alloc-head .job { color: var(--text-muted); font-size: 13px; }
+  .track {
+    height: 8px; background: var(--surface-2); border-radius: 4px;
+    overflow: hidden;
+  }
+  .track > div { height: 100%; background: var(--bar); border-radius: 4px; }
+
+  /* ---- capacity meter ---- */
+  .meter { position: relative; margin: 20px 0 8px; }
+  .meter-track {
+    height: 26px; background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 6px; overflow: hidden;
+  }
+  .meter-fill { height: 100%; }
+  .meter-ok   { background: var(--ok); }
+  .meter-warn { background: var(--warn); }
+  .meter-over { background: var(--over); }
+  .meter-gate {
+    position: absolute; top: -6px; bottom: -6px; left: 70%;
+    border-left: 2px dashed var(--text-muted);
+  }
+  .meter-legend {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  }
+
+  /* ---- brand / activation split ---- */
+  .split { position: relative; margin: 22px 0 10px; }
+  .split-track {
+    height: 8px; border-radius: 4px;
+    background: linear-gradient(to right, var(--surface-2), var(--bar));
+  }
+  .split-marker {
+    position: absolute; top: -8px; width: 2px; height: 24px;
+    background: var(--accent);
+  }
+  .split-ends {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--text-muted); margin-top: 10px;
+  }
+
+  /* ---- decision cards ---- */
+  .decision {
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 18px 20px; margin: 0 0 14px; background: var(--surface);
+  }
+  .decision h3 { margin: 0 0 12px; font-size: 15px; }
+  .positions { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 0 0 14px; }
+  .position {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 6px; padding: 12px 14px;
+  }
+  .who {
+    display: inline-block; font-size: 11px; font-weight: 650;
+    letter-spacing: .05em; text-transform: uppercase;
+    color: var(--text-muted); margin: 0 6px 6px 0;
+  }
+  .position p { margin: 0; font-size: 14px; }
+  .ruling {
+    border-left: 3px solid var(--accent); padding: 4px 0 4px 14px;
+    font-size: 15px;
+  }
+  .ruling strong { display: block; font-size: 11px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+  @media (max-width: 620px) { .positions { grid-template-columns: 1fr; } }
+
+  /* ---- honesty note ---- */
+  .honesty-note {
+    border: 1px dashed var(--border-strong); border-radius: 8px;
+    padding: 18px 20px; background: var(--surface); font-size: 15px;
+  }
+
+  /* ---- tables ---- */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .scroll { overflow-x: auto; }
+  th {
+    text-align: left; font-size: 11px; font-weight: 650; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--text-muted);
+    padding: 8px 12px; border-bottom: 1px solid var(--border-strong);
+  }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  /* ---- phases ---- */
+  .phase {
+    border-left: 2px solid var(--border-strong);
+    padding: 0 0 4px 20px; margin: 0 0 22px; position: relative;
+  }
+  .phase::before {
+    content: ""; position: absolute; left: -5px; top: 7px;
+    width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+  }
+  .phase h3 { margin: 0 0 4px; }
+  .phase .when { font-size: 13px; color: var(--text-muted); margin: 0 0 8px; }
+
+  /* ---- collapsibles ---- */
+  details {
+    border: 1px solid var(--border); border-radius: 8px;
+    margin: 0 0 10px; background: var(--surface);
+  }
+  summary {
+    cursor: pointer; padding: 14px 18px; font-weight: 600; font-size: 15px;
+    display: flex; justify-content: space-between; align-items: center;
+    list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--text-muted); font-weight: 400; }
+  details[open] summary::after { content: "\2212"; }
+  .body { padding: 0 18px 18px; border-top: 1px solid var(--border); }
+  .body pre {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 14px; overflow-x: auto; font-size: 13px; line-height: 1.65;
+    white-space: pre-wrap;
+  }
+  .summary-meta { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+
+  footer {
+    margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">CMO Council</p>
+  <h1>{{PLAN_NAME}}</h1>
+  <p class="dateline">{{DATE}} &middot; Six seats &middot; Blind cross-review &middot; CMO synthesis</p>
+  <p class="planlink">Full plan: <a href="{{PLAN_FILENAME}}">{{PLAN_FILENAME}}</a></p>
+
+  <div class="bet">
+    <p class="bet-label">The bet</p>
+    <p class="bet-value">{{THE_BET_SENTENCE}}</p>
+    <p>{{WHAT_HAPPENS_IF_WRONG}}</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><p class="stat-k">Objective</p><p class="stat-v">{{OBJECTIVE}}</p></div>
+    <div class="stat"><p class="stat-k">By</p><p class="stat-v">{{DEADLINE}}</p></div>
+    <div class="stat"><p class="stat-k">Budget</p><p class="stat-v">{{BUDGET}}</p></div>
+    <div class="stat"><p class="stat-k">Team load</p><p class="stat-v">{{HOURS_PER_WEEK}}</p></div>
+  </div>
+
+  <section>
+    <h2>The arithmetic</h2>
+    <div class="chain">
+      <div class="step">{{OBJECTIVE_VALUE}}</div>
+      <div class="step">&nbsp;&nbsp;&larr; {{STAGE_3}} at {{RATE}}</div>
+      <div class="step">&nbsp;&nbsp;&larr; {{STAGE_2}} at {{RATE}}</div>
+      <div class="step weak">&nbsp;&nbsp;&larr; {{STAGE_1}} at {{RATE}} &nbsp;&larr; weakest link</div>
+    </div>
+    <p class="small muted">{{WHY_THAT_LINK_IS_WEAKEST}}</p>
+  </section>
+
+  <section>
+    <h2>Where the money goes</h2>
+    <div class="alloc">
+      <div class="alloc-head"><span><strong>{{CHANNEL}}</strong> <span class="job">{{JOB_IN_FUNNEL}}</span></span><span>{{AMOUNT}}</span></div>
+      <div class="track"><div style="width:00%"></div></div>
+    </div>
+    <!-- repeat .alloc per channel -->
+
+    <h3>Brand building vs. activation</h3>
+    <div class="split">
+      <div class="split-track"></div>
+      <div class="split-marker" style="left:00%"></div>
+    </div>
+    <div class="split-ends"><span>All equity</span><span>All activation</span></div>
+    <p class="small">{{SPLIT_ASSESSMENT}} This split is deliberate because {{REASON}}.</p>
+  </section>
+
+  <section>
+    <h2>Capacity</h2>
+    <div class="meter">
+      <div class="meter-track"><div class="meter-fill meter-ok" style="width:00%"></div></div>
+      <div class="meter-gate"></div>
+    </div>
+    <div class="meter-legend">
+      <span>{{SCHEDULED_HOURS}} of {{AVAILABLE_HOURS}} hrs/week scheduled</span>
+      <span>Gate: 70%</span>
+    </div>
+    <p class="small muted">{{CAPACITY_NOTE}}</p>
+  </section>
+
+  <section>
+    <h2>What the council argued about</h2>
+
+    <div class="decision">
+      <h3>{{CONFLICT_TOPIC}}</h3>
+      <div class="positions">
+        <div class="position">
+          <span class="who">{{SEAT_A}}</span>
+          <p>{{POSITION_A}}</p>
+        </div>
+        <div class="position">
+          <span class="who">{{SEAT_B}}</span>
+          <p>{{POSITION_B}}</p>
+        </div>
+      </div>
+      <div class="ruling">
+        <strong>CMO ruling</strong>
+        {{DECISION}} &mdash; {{REASONING}}
+      </div>
+    </div>
+    <!-- repeat .decision per conflict -->
+
+    <!-- IF ROUND TWO PRODUCED NO GENUINE CONFLICT, use this instead:
+    <div class="honesty-note">
+      <strong>No genuine conflict surfaced.</strong> The six seats produced
+      sections that did not contradict each other. That is a finding about the
+      process, not a sign of a strong plan &mdash; the tension this council
+      relies on was simulated rather than structural, and this plan has not been
+      stress-tested the way the method intends. Treat it as a single-perspective
+      plan and consider running marketing-council on it before committing budget.
+    </div>
+    -->
+  </section>
+
+  <section>
+    <h2>The 60% test</h2>
+    <p>Each seat was told budget and team had been cut to 60% and asked what survives.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Cut first</th><th>Seats who said so</th><th>Survives regardless</th></tr></thead>
+      <tbody>
+        <tr><td>{{CUT}}</td><td>{{N}} of {{N}}</td><td>{{KEPT}}</td></tr>
+      </tbody>
+    </table></div>
+    <p class="small muted">{{CONVERGENCE_NOTE}} Independent convergence here is the strongest signal the council produces.</p>
+  </section>
+
+  <section>
+    <h2>The 90 days</h2>
+
+    <div class="phase">
+      <h3>Phase 1 &mdash; {{PHASE_NAME}}</h3>
+      <p class="when">{{WEEKS}} &middot; {{PURPOSE}}</p>
+      <ul>
+        <li>{{ACTIVITY}} &mdash; <span class="muted">{{OWNER}}, target {{NUMBER}}</span></li>
+      </ul>
+      <p class="small muted"><strong>Gate to phase 2:</strong> {{GATE}}</p>
+    </div>
+    <!-- repeat .phase -->
+  </section>
+
+  <section>
+    <h2>What this plan assumes</h2>
+    <p class="small muted">Largest blast radius first. Confirm the first one before spending anything.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Assumption</th><th>Basis</th><th>If wrong</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>{{ASSUMPTION}} <span class="tag tag-assumed">Assumed</span></td>
+          <td>{{BASIS}}</td>
+          <td>{{WHAT_BREAKS}}</td>
+        </tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>What we did not do</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Cut</th><th>Why</th><th>Revisit when</th></tr></thead>
+      <tbody>
+        <tr><td>{{IDEA}}</td><td>{{REASON}}</td><td>{{TRIGGER}}</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>The seats, in full</h2>
+
+    <details class="seat">
+      <summary>Insight Lead <span class="summary-meta">confidence: {{LEVEL}}</span></summary>
+      <div class="body">
+        <pre>{{STRUCTURED_BLOCK}}</pre>
+        <p>{{SECTION}}</p>
+      </div>
+    </details>
+    <!-- repeat per seat: Brand &amp; Positioning Strategist, Growth Lead,
+         Creative Director, Sales &amp; Frontline Lead, Marketing Ops -->
+  </section>
+
+  <section>
+    <h2>The conflict round</h2>
+    <p class="small muted">Each seat read all six sections anonymized. Mapping revealed in the transcript.</p>
+
+    <details class="review">
+      <summary>Reviewer &mdash; {{SEAT_NAME}}</summary>
+      <div class="body">
+        <p><strong>Which section breaks mine:</strong> {{ANSWER}}</p>
+        <p><strong>Double-counting:</strong> {{ANSWER}}</p>
+        <p><strong>Nobody owns:</strong> {{ANSWER}}</p>
+        <p><strong>60% test:</strong> {{ANSWER}}</p>
+        <p><strong>Riskiest assumption:</strong> {{ANSWER}}</p>
+      </div>
+    </details>
+    <!-- repeat per reviewer -->
+  </section>
+
+  <section>
+    <h2>Open questions for you</h2>
+    <ul>
+      <li>{{QUESTION}} &mdash; <span class="muted">{{WHAT_IT_CHANGES}}</span></li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>{{DATE}} &middot; {{MODE}} mode &middot; Six seats{{PLUS_SWING}} &middot; Blind cross-review &middot; CMO synthesis</p>
+    <p>Plan: {{PLAN_FILENAME}} &middot; Transcript: cmo-council-transcript-{{DATE}}.md</p>
+    <p>Next step: run <code>marketing-council</code> on this plan to have six adversarial advisors try to break it before any money moves.</p>
+  </footer>
+
+</div>
+</body>
+</html>
