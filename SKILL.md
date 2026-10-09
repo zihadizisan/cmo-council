@@ -1,6 +1,6 @@
 ---
-name: CMO Council
-description: "Build a marketing plan by convening a working council of six marketing and stakeholder seats — Insight Lead, Brand & Positioning Strategist, Growth Lead, Creative Director, Sales & Frontline Lead, Marketing Ops — who each draft their part of the plan, then cross-review each other's sections blind to surface contradictions, then a CMO chairman resolves every conflict and writes one coherent, costed, sequenced plan. Asks a short round of clarifying questions before convening. MANDATORY TRIGGERS: 'cmo council', 'build me a marketing plan', 'write a marketing plan', 'create a marketing plan', 'I need a GTM plan', 'plan my launch', 'build a campaign plan', 'help me plan this launch'. STRONG TRIGGERS (use when the user supplies context, goals, or a rough draft and wants a finished plan back): 'here is my draft marketing plan, make it better', 'turn this into a real plan', 'what should our marketing look like for X', 'we need a plan for [product/quarter/launch]', 'rebuild this plan'. ROUTING: this skill WRITES a plan. If the user already has a plan and wants it scored, critiqued, or given a go/no-go verdict, use the marketing-council skill instead. Do NOT trigger for writing a single ad, post, email, or piece of copy, or for generic marketing questions and channel how-tos."
+name: cmo-council
+description: "Build or rebuild a marketing, go-to-market, launch, or campaign plan with six marketing owner seats, blind conflict review, and CMO synthesis. Use when the user wants an actionable plan from a brief or rough draft. Produces a costed, sequenced plan, HTML report, and transcript. Not for scoring a finished plan, writing individual ads or posts, or generic marketing questions."
 ---
 
 # CMO Council
@@ -12,6 +12,16 @@ Real plans are the residue of an argument. The CMO Council stages that argument 
 This is the LLM Council methodology (Karpathy) turned from evaluation to construction. Its sibling skill, `marketing-council`, takes a finished plan and scores it. This one produces the plan in the first place. They chain: build here, pressure-test there.
 
 ---
+
+## Host compatibility
+
+Resolve `references/` and `assets/` relative to this SKILL.md, not the user's working directory. Save generated deliverables in the user's working directory.
+
+Use the host's available tools for reading files, asking questions, delegating to subagents, writing files, and opening reports. A structured question tool is optional: ordinary chat questions are sufficient, and host question-count limits take precedence. Return clickable file paths when attachment or preview tools are unavailable. No specific connector or file-delivery tool is required.
+
+Use independent subagents for the council when available. Run as many seats concurrently as the host permits, then fresh batches until all seats finish. Never pass earlier drafts to later drafting seats. Collect every draft before starting blind review, and every review before chairman synthesis. Release completed agent slots when supported. If independent subagents are unavailable, disclose that a full independent council cannot run; offer a clearly labeled single-agent walkthrough without claiming blind or independent review.
+
+The optional seventh seat participates in both rounds; expand labels to A–G and adapt counts in reference prompts accordingly. Marketing Council is an optional follow-up, not an installation dependency.
 
 ## The design principle
 
@@ -86,7 +96,7 @@ Then scan the workspace for material that makes the plan specific rather than ge
 - Revenue, pipeline, or analytics data; past campaign results
 - Prior `cmo-council-*` or `marketing-council-*` transcripts, so the council does not re-argue settled ground or contradict a plan already in flight
 
-Use `Glob` and quick `Read` calls. What you find enters the brief as **GIVEN** fact, and every given must be traceable to a file. If the workspace does not say it, it is not a given.
+Use the host's file search and reading tools. What you find enters the brief as **GIVEN** fact, and every given must be traceable to a file. If the workspace does not say it, it is not a given.
 
 ### Step 2: the clarifying round — one round, four questions, defaults attached
 
@@ -96,7 +106,7 @@ The protocol in full is in `references/intake.md`. In short:
 
 1. Fill all twelve brief slots from the user's message and the workspace scan. Never ask about a slot you already have or can responsibly infer.
 2. Rank what is left by **plan-changing power** — how differently the council would write if the answer flipped. A budget of $2k versus $200k changes every section. A brand's preferred font changes nothing. Ask only about the top of that list.
-3. Ask **at most four questions in one round** via `AskUserQuestion`, each with a recommended default already first in the list so the user can accept everything in a single pass.
+3. Ask **at most four questions in one round** using the host's question tool or ordinary chat, each with a recommended default already first in the list so the user can accept everything in a single pass.
 4. **Hard cap: two rounds ever**, and the second only if an answer opened a genuinely new fork. Interrogation is not diligence.
 5. Everything still unknown becomes an entry in the **Assumption Ledger**, passed to all six seats as a stated assumption, and printed in the final plan under "what this plan assumes" with a line on what changes if it is wrong.
 
@@ -117,7 +127,7 @@ Do not editorialize and do not signal a preferred direction. A steered brief pro
 
 ### Step 4: round one — the seats draft in parallel
 
-Spawn all six (or seven) simultaneously. Sequential spawning wastes time and lets earlier drafts contaminate later ones.
+Spawn all six (or seven) independently, in parallel up to the host concurrency limit. Use fresh batches as needed; no drafting seat sees another draft.
 
 Each seat returns this block, then its section:
 
@@ -134,10 +144,10 @@ CONFIDENCE        High / Medium / Low, and why.
 **The number tag is the single most important mechanic in this skill.** A plan builder that invents plausible figures produces a document that reads authoritative and is structurally untrustworthy. Three tags, no exceptions:
 
 - **GIVEN** — from the user or a workspace file. Cite which.
-- **BENCHMARK** — a category norm. Stated as a range, never a point estimate, and named as a benchmark in the plan.
+- **BENCHMARK** — a category norm backed by a named source and date. State it as a range, never a point estimate. If no source can be verified, label it ASSUMED instead.
 - **ASSUMED** — invented to make the section work. Goes straight into the Assumption Ledger.
 
-An untagged number does not reach the plan. If a seat returns untagged numbers, send that seat back rather than cleaning up after it.
+For calculated numbers, show the formula and source tags; a calculation inherits ASSUMED if any input is assumed. Do not use DERIVED as a substitute for provenance. An untagged number does not reach the plan. If a seat returns untagged numbers, send that seat back rather than cleaning up after it.
 
 ### Step 5: round two — the conflict round, anonymized
 
@@ -145,7 +155,7 @@ Collect the six sections. Relabel them **Section A through F with a freshly rand
 
 Anonymity is load-bearing here for a specific reason: in a room of named marketing roles, Ops defers to Strategy and everyone defers to whoever sounds most senior. Blind reading is what lets the Ops seat say "the positioning section has committed us to a content volume nobody can produce" without it registering as insubordination.
 
-Spawn six fresh sub-agents. Each reads all six sections and answers five questions:
+Spawn one fresh reviewer per seat, in batches as needed. Give each its seat responsibilities and the anonymized sections, without the author mapping. Each reads all six sections and answers five questions:
 
 1. **Which section, built as written, breaks mine?** Name the specific contradiction, not a general concern.
 2. **Where does this plan double-count?** Two sections spending the same money, booking the same week, tasking the same person, or claiming credit for the same result.
@@ -175,7 +185,7 @@ cmo-council-report-[YYYY-MM-DD].html     visual summary of the plan and the argu
 cmo-council-transcript-[YYYY-MM-DD].md   full transcript
 ```
 
-Open the HTML report. Send the plan with `SendUserFile` so it reaches the user wherever they are.
+Open the HTML report if the host supports previews. Return links or paths to all three saved files; attach them if the host supports attachments. Do not require a special delivery tool.
 
 Then offer the chain, in one line: run `marketing-council` on the finished plan to have six adversarial advisors try to break it before any money moves.
 

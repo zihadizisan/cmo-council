@@ -16,7 +16,7 @@ Then strip the tells. Sections announce their author constantly — "from a crea
 
 ## Conflict reviewer prompt
 
-Spawn one per seat, all in parallel. Each reviewer sees all six sections, including its own — it does not know which one is its own, and that is fine and occasionally instructive.
+Spawn one fresh reviewer per seat, in parallel up to the host limit and in batches if needed. Supply its seat responsibilities and the anonymized section set; do not reveal the author mapping. Each reviewer sees all six sections, including its own — it does not know which one is its own, and that is fine and occasionally instructive.
 
 ```
 You sat on a CMO Council that has just drafted a marketing plan. Six seats each
@@ -196,7 +196,7 @@ Enforce these on the chairman's output before writing anything to disk. A plan t
 
 **5. The traceability gate.** Every number carries its tag, and every strategic claim traces to a seat. If the chairman has generated free-standing opinions of its own, the session has collapsed back into a single perspective and the six seats bought nothing — regenerate with the roster note made explicit.
 
-**6. The honesty gate.** If round two surfaced no genuine contradiction, the report says so. It is a finding about the process: the tension was simulated rather than structural, the plan was not actually stress-tested, and the user is entitled to know that before treating the output as council-hardened.
+**Additional disclosure: honesty.** If round two surfaced no genuine contradiction, the report says so. It is a finding about the process: the tension was simulated rather than structural, the plan was not actually stress-tested, and the user is entitled to know that before treating the output as council-hardened.
 
 ---
 
@@ -216,6 +216,6 @@ Include, in order:
 8. All six conflict reviews, including every 60% test answer
 9. Any roster or anti-drift notes
 10. The chairman's full output
-11. The gate check — each of the six, pass or fail, and what was regenerated
+11. The gate check — each of the five gates, pass or fail, what was regenerated, and the honesty disclosure
 
 Item 8 is the part future readers actually return to. The plan says what was decided; the 60% tests say what the council believed was load-bearing, which is the more useful thing to know when the budget really does get cut.

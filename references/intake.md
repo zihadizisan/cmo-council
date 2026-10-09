@@ -93,7 +93,7 @@ For each UNKNOWN slot, ask yourself: **if the answer flipped to its opposite, ho
 
 ### Step 3 — ask at most four, in one round, with defaults
 
-Use `AskUserQuestion`. Every question gets 2-4 concrete options and a recommended default listed first with "(Recommended)" in its label, so the user can accept the whole round in a single pass and still get a good plan.
+Use the host's structured question tool when available, otherwise ask in ordinary chat. Respect the tool's question and option limits. Every question gets 2-4 concrete options and a recommended default listed first with "(Recommended)" in its label, so the user can accept the whole round in a single pass and still get a good plan.
 
 The recommendation is doing real work here. A user who does not know their own answer will pick the recommended option, which means your recommendation must be genuinely defensible rather than a placeholder. Make each option a real position with a real consequence, not a vague band.
 

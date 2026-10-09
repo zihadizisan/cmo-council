@@ -82,6 +82,29 @@ On Windows, replace `~` with your user directory, such as `$env:USERPROFILE` in 
 
 The skill's display name is **CMO Council**; its repository and folder are `cmo-council`. Assistants differ in tool names: use the host's equivalents for questions, subagents, file delivery, and opening HTML. Where concurrency is limited, run independent seats in batches without sharing drafts until the review round.
 
+### Copy without Git
+
+Use GitHub's **Code → Download ZIP**, extract it, and rename `cmo-council-main` to `cmo-council`. Copy the whole folder into the relevant skills directory. Keep `SKILL.md`, `references/`, `assets/`, and `agents/` together; copying SKILL.md alone leaves required prompts and templates behind.
+
+| Host | Personal folder | Project folder | Invoke |
+|---|---|---|---|
+| Claude Code | `~/.claude/skills/cmo-council/` | `.claude/skills/cmo-council/` | `/cmo-council` |
+| Codex | `~/.agents/skills/cmo-council/` | `.agents/skills/cmo-council/` | `$cmo-council` |
+
+Windows PowerShell clone commands:
+
+```powershell
+# Choose the host you use:
+git clone https://github.com/zihadizisan/cmo-council.git "$env:USERPROFILE/.claude/skills/cmo-council"
+git clone https://github.com/zihadizisan/cmo-council.git "$env:USERPROFILE/.agents/skills/cmo-council"
+```
+
+Check that `SKILL.md` is directly inside `cmo-council`, not inside another nested folder. Start a new session if the skill is missing. For a safe installation check, invoke the skill and ask: "Confirm you can read references/intake.md and assets/plan-template.md; do not run the council yet."
+
+The portable identifier is `cmo-council`. The heading and Codex UI display name remain **CMO Council**. Full council execution needs independent subagents; if your host does not expose them, the skill explains the limitation and offers a labeled single-agent walkthrough. Marketing Council is optional.
+
+Installation conventions: [Claude Code skills documentation](https://code.claude.com/docs/en/skills) and [Codex skills documentation](https://developers.openai.com/codex/skills).
+
 ## Example
 
 See [the fictional example brief](examples/brief.md) and [illustrative plan excerpt](examples/plan-excerpt.md). These explain the inputs, arithmetic, and conflict rulings; they are not a recorded council run or a client case study.
@@ -128,6 +151,7 @@ The plan is what you act on. The report is what you scan. The transcript is what
 
 ```
 SKILL.md                       the pipeline
+agents/openai.yaml             Codex display name
 references/intake.md           twelve brief slots, question protocol, assumption ledger
 references/roster.md           all six seat prompts, swing bench, anti-drift check
 references/rounds.md           conflict-round prompt, CMO prompt, standing rules
